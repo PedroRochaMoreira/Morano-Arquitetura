@@ -351,3 +351,52 @@ form.addEventListener("submit", (event) => {
       formNote.textContent = "Erro de conexão. Verifique sua internet e tente de novo.";
     });
 });
+
+// Scroll suave com velocidade personalizada
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener("click", function (e) {
+    const id = this.getAttribute("href");
+
+    if (id === "#") return;
+
+    const target = document.querySelector(id);
+
+    if (!target) return;
+
+    e.preventDefault();
+
+    smoothScroll(target, 1000); // duração em ms
+  });
+});
+
+function smoothScroll(target, duration = 1000) {
+  const start = window.pageYOffset;
+  const end = target.getBoundingClientRect().top + start;
+  const distance = end - start;
+
+  let startTime = null;
+
+  function ease(t) {
+    return t < 0.5
+      ? 4 * t * t * t
+      : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function animation(currentTime) {
+    if (!startTime) startTime = currentTime;
+
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+
+    window.scrollTo(
+      0,
+      start + distance * ease(progress)
+    );
+
+    if (elapsed < duration) {
+      requestAnimationFrame(animation);
+    }
+  }
+
+  requestAnimationFrame(animation);
+}
