@@ -37,7 +37,7 @@
       <section class="hero" id="inicio">
         <div class="hero-media parallax" data-parallax-speed="0.22">
           <img
-            src="assets/morano-hero.jpg"
+            src="Novas implementações/WhatsApp Image 2026-07-15 at 18.22.01 (2).jpeg"
             alt="Projeto residencial contemporâneo da Morano Arquitetura"
           />
         </div>
@@ -101,46 +101,8 @@
           </p>
         </div>
 
-        <div class="project-grid">
-          <article class="project-card reveal">
-            <img
-              src="assets/morano-interior-01.jpg"
-              alt="Ambiente social integrado com mesa em mármore e iluminação planejada"
-            />
-            <div class="project-info">
-              <span>Residencial</span>
-              <h3>Projeto Essenza</h3>
-              <p>Ambiente social integrado com materiais nobres, luz indireta e composição acolhedora.</p>
-              <div class="project-thumbs" aria-label="Outras imagens do Projeto Essenza">
-              </div>
-            </div>
-          </article>
-
-          <article class="project-card tall reveal reveal-delay-1">
-            <img
-              src="assets/morano-fachada-03.jpg"
-              alt="Residência contemporânea noturna com paisagismo iluminado"
-            />
-            <div class="project-info">
-              <span>Residencial</span>
-              <h3>Projeto Prisma</h3>
-              <p>Volumes amplos, iluminação cênica e paisagismo integrado ao desenho da fachada.</p>
-              <div class="project-thumbs" aria-label="Outras imagens do Projeto Prisma">
-              </div>
-            </div>
-          </article>
-
-          <article class="project-card reveal reveal-delay-2">
-            <img
-              src="assets/morano-fachada-02.jpg"
-              alt="Fachada residencial contemporânea com varanda, garagem e paisagismo"
-            />
-            <div class="project-info">
-              <span>Residencial</span>
-              <h3>Projeto Nexo</h3>
-              <p>Fachada horizontal, varanda protegida e composição de pedra, vidro e madeira.</p>
-            </div>
-          </article>
+        <div class="project-grid" data-project-grid>
+          <!-- os cards do portfolio sao gerados pelo script.js a partir do array "projects" -->
         </div>
       </section>
 
@@ -149,7 +111,7 @@
           <img
             class="parallax"
             data-parallax-speed="0.12"
-            src="assets/morano-interior-03.jpg"
+            src="assets/WhatsApp Image 2026-07-15 at 18.22.00.jpeg"
             alt="Ambiente integrado com mármore, sofá azul e iluminação planejada"
           />
         </div>
@@ -227,8 +189,8 @@
       </section>
 
       <section class="gallery-strip" aria-label="Galeria de projetos">
-        <img src="assets/morano-interior-02.jpg" alt="Vista complementar do Projeto Essenza" />
-        <img src="assets/morano-fachada-04.jpg" alt="Vista complementar do Projeto Prisma" />
+        <img src="assets/WhatsApp Image 2026-07-15 at 18.22.00 (3).jpeg" alt="Vista complementar do Projeto Essenza" />
+        <img src="assets/terrapark2.jpeg" alt="Vista complementar do Projeto Prisma" />
       </section>
 
       <section class="contact section-pad" id="contato">
@@ -274,6 +236,27 @@
         </form>
       </section>
     </main>
+
+    <div class="lightbox-overlay" data-lightbox-overlay>
+      <div class="lightbox-panel">
+        <div class="lightbox-header">
+          <div>
+            <span class="lightbox-category" data-lightbox-category></span>
+            <h3 class="lightbox-title" data-lightbox-title></h3>
+          </div>
+          <button class="lightbox-close" type="button" aria-label="Fechar" data-lightbox-close>&times;</button>
+        </div>
+
+        <div class="lightbox-img-wrap">
+          <img src="" alt="" data-lightbox-image />
+          <button class="lightbox-arrow lightbox-prev" type="button" aria-label="Foto anterior" data-lightbox-prev>&lsaquo;</button>
+          <button class="lightbox-arrow lightbox-next" type="button" aria-label="Próxima foto" data-lightbox-next>&rsaquo;</button>
+          <span class="lightbox-counter" data-lightbox-counter></span>
+        </div>
+
+        <div class="lightbox-thumb-strip" data-lightbox-thumb-strip></div>
+      </div>
+    </div>
 
     <footer class="footer">
       <span>Morano Arquitetura e Construção</span>

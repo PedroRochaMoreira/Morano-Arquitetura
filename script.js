@@ -1,3 +1,168 @@
+// ==========================================================
+// PORTFOLIO - dados dos projetos
+// Para adicionar um projeto novo, so copiar um objeto abaixo,
+// trocar os textos e apontar "images" pras fotos em /assets
+// ==========================================================
+const projects = [
+  {
+    id: "leparc",
+    title: "Le Parc Luziânia",
+    category: "Residencial",
+    description: "Ambiente social integrado com materiais nobres, luz indireta e composição acolhedora.",
+    tall: false,
+    images: ["assets/leparc.jpeg", "assets/leparc2.jpeg"]
+  },
+  {
+    id: "AlphaVille",
+    title: "AlphaVille Brasília",
+    category: "Residencial",
+    description: "Volumes amplos, iluminação cênica e paisagismo integrado ao desenho da fachada.",
+    tall: true,
+    images: ["assets/alphaville2.jpeg", "assets/alphaville.jpeg"]
+  },
+  {
+    id: "TerraPark",
+    title: "Terra Park Luziânia",
+    category: "Residencial",
+    description: "Fachada horizontal, varanda protegida e composição de pedra, vidro e madeira.",
+    tall: false,
+    images: ["assets/terrapark.jpeg", "assets/terrapark2.jpeg"]
+  }
+];
+
+const projectGrid = document.querySelector("[data-project-grid]");
+
+function renderProjects() {
+  projectGrid.innerHTML = "";
+
+  projects.forEach((project, index) => {
+    const card = document.createElement("article");
+    card.className = `project-card reveal${project.tall ? " tall" : ""}${index > 0 ? ` reveal-delay-${Math.min(index, 4)}` : ""}`;
+
+    const extraThumbs = project.images.slice(1);
+    const thumbsHtml = extraThumbs
+      .map(
+        (img, i) => `
+          <button type="button" data-thumb-index="${i + 1}">
+            <img src="${img}" alt="Outra imagem do ${project.title}" loading="lazy" />
+          </button>`
+      )
+      .join("");
+
+    card.innerHTML = `
+      <img src="${project.images[0]}" alt="${project.title} - ${project.description}" />
+      <div class="project-info">
+        <span>${project.category}</span>
+        <h3>${project.title}</h3>
+        <p>${project.description}</p>
+        ${extraThumbs.length ? `<div class="project-thumbs" aria-label="Outras imagens do ${project.title}">${thumbsHtml}</div>` : ""}
+      </div>
+    `;
+
+    card.addEventListener("click", (event) => {
+      const thumbButton = event.target.closest("[data-thumb-index]");
+      const startIndex = thumbButton ? Number(thumbButton.dataset.thumbIndex) : 0;
+      openLightbox(project, startIndex);
+    });
+
+    projectGrid.appendChild(card);
+  });
+}
+
+renderProjects();
+
+// ==========================================================
+// LIGHTBOX
+// ==========================================================
+let lightboxProject = null;
+let lightboxIndex = 0;
+let lightboxScrollY = 0;
+
+const lightboxOverlay = document.querySelector("[data-lightbox-overlay]");
+const lightboxImage = document.querySelector("[data-lightbox-image]");
+const lightboxTitle = document.querySelector("[data-lightbox-title]");
+const lightboxCategory = document.querySelector("[data-lightbox-category]");
+const lightboxCounter = document.querySelector("[data-lightbox-counter]");
+const lightboxThumbStrip = document.querySelector("[data-lightbox-thumb-strip]");
+
+function openLightbox(project, startIndex = 0) {
+  lightboxProject = project;
+  lightboxIndex = startIndex;
+  renderLightbox();
+
+  lightboxScrollY = window.scrollY;
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${lightboxScrollY}px`;
+  document.body.style.width = "100%";
+
+  lightboxOverlay.classList.add("active");
+}
+
+function closeLightbox() {
+  lightboxOverlay.classList.remove("active");
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.width = "";
+  window.scrollTo(0, lightboxScrollY);
+  lightboxProject = null;
+}
+
+function lightboxNext() {
+  if (!lightboxProject) return;
+  lightboxIndex = (lightboxIndex + 1) % lightboxProject.images.length;
+  renderLightbox();
+}
+
+function lightboxPrev() {
+  if (!lightboxProject) return;
+  lightboxIndex = (lightboxIndex - 1 + lightboxProject.images.length) % lightboxProject.images.length;
+  renderLightbox();
+}
+
+function setLightboxIndex(i) {
+  lightboxIndex = i;
+  renderLightbox();
+}
+
+function renderLightbox() {
+  if (!lightboxProject) return;
+
+  lightboxImage.src = lightboxProject.images[lightboxIndex];
+  lightboxImage.alt = lightboxProject.title;
+  lightboxTitle.textContent = lightboxProject.title;
+  lightboxCategory.textContent = lightboxProject.category;
+  lightboxCounter.textContent = `${lightboxIndex + 1} / ${lightboxProject.images.length}`;
+
+  lightboxThumbStrip.innerHTML = "";
+  if (lightboxProject.images.length > 1) {
+    lightboxProject.images.forEach((img, i) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = i === lightboxIndex ? "active" : "";
+      btn.innerHTML = `<img src="${img}" alt="" loading="lazy" />`;
+      btn.addEventListener("click", () => setLightboxIndex(i));
+      lightboxThumbStrip.appendChild(btn);
+    });
+  }
+}
+
+document.querySelector("[data-lightbox-close]").addEventListener("click", closeLightbox);
+document.querySelector("[data-lightbox-next]").addEventListener("click", lightboxNext);
+document.querySelector("[data-lightbox-prev]").addEventListener("click", lightboxPrev);
+
+lightboxOverlay.addEventListener("click", (event) => {
+  if (event.target === lightboxOverlay) closeLightbox();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (!lightboxProject) return;
+  if (event.key === "Escape") closeLightbox();
+  if (event.key === "ArrowRight") lightboxNext();
+  if (event.key === "ArrowLeft") lightboxPrev();
+});
+
+// ==========================================================
+
 const header = document.querySelector("[data-header]");
 const nav = document.querySelector("[data-nav]");
 const navToggle = document.querySelector("[data-nav-toggle]");
