@@ -50,6 +50,7 @@ function renderProjects() {
       .join("");
 
     card.innerHTML = `
+      <span class="project-index">${String(index + 1).padStart(2, "0")}</span>
       <img src="${project.images[0]}" alt="${project.title} - ${project.description}" />
       <div class="project-info">
         <span>${project.category}</span>
@@ -70,6 +71,32 @@ function renderProjects() {
 }
 
 renderProjects();
+
+// ==========================================================
+// CURSOR CUSTOMIZADO NOS CARDS DE PROJETO
+// so ativa em dispositivos com mouse (pointer: fine), respeitando reduced motion
+// ==========================================================
+const projectCursor = document.querySelector("[data-project-cursor]");
+const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+const prefersReducedMotionForCursor = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+if (projectCursor && hasFinePointer && !prefersReducedMotionForCursor) {
+  document.querySelectorAll(".project-card").forEach((card) => {
+    card.classList.add("has-custom-cursor");
+
+    card.addEventListener("mouseenter", () => {
+      projectCursor.classList.add("active");
+    });
+
+    card.addEventListener("mouseleave", () => {
+      projectCursor.classList.remove("active");
+    });
+
+    card.addEventListener("mousemove", (event) => {
+      projectCursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate3d(-50%, -50%, 0) scale(1)`;
+    });
+  });
+}
 
 // ==========================================================
 // LIGHTBOX
