@@ -1116,3 +1116,9 @@ cite {
     clip-path: none;
   }
 }
+
+#citacao {
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  line-height: 1.1;
+  text-align: center;
+}
