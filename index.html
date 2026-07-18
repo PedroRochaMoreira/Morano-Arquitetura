@@ -10,8 +10,17 @@
     <title>Morano Arquitetura</title>
     <link rel="icon" type="image/png" href="/assets/129790830_375659913506400_69119246637319007_n.jpg">
     <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   </head>
-  <body>
+  <body class="is-loading">
+    <div class="preloader" data-preloader aria-hidden="true">
+      <div class="preloader-inner">
+        <img class="preloader-logo" src="assets/morano-logo.png" alt="" />
+        <p class="preloader-tag">Arquitetura e construção</p>
+        <div class="preloader-bar"><span data-preloader-fill></span></div>
+      </div>
+    </div>
+
     <div class="cursor-light" aria-hidden="true"></div>
     <div class="project-cursor" data-project-cursor aria-hidden="true">Ver projeto</div>
 
@@ -258,14 +267,38 @@
           <button class="lightbox-close" type="button" aria-label="Fechar" data-lightbox-close>&times;</button>
         </div>
 
-        <div class="lightbox-img-wrap">
+        <div class="lightbox-mode-tabs" data-lightbox-mode-tabs hidden>
+          <button type="button" class="active" data-lightbox-mode="photos">&larr; Voltar para fotos</button>
+        </div>
+
+        <div class="lightbox-img-wrap" data-lightbox-view="photos">
           <img src="" alt="" data-lightbox-image />
           <button class="lightbox-arrow lightbox-prev" type="button" aria-label="Foto anterior" data-lightbox-prev>&lsaquo;</button>
           <button class="lightbox-arrow lightbox-next" type="button" aria-label="Próxima foto" data-lightbox-next>&rsaquo;</button>
           <span class="lightbox-counter" data-lightbox-counter></span>
         </div>
 
+        <div class="lightbox-3d-wrap" data-lightbox-view="3d" hidden>
+          <model-viewer
+            data-lightbox-model
+            camera-controls
+            touch-action="pan-y"
+            interaction-prompt="none"
+            shadow-intensity="1"
+            exposure="1"
+            camera-orbit="45deg 65deg auto"
+            min-camera-orbit="auto 15deg auto"
+            max-camera-orbit="auto 120deg auto"
+          ></model-viewer>
+          <span class="lightbox-3d-hint">Arraste para girar · pinça ou scroll para zoom</span>
+        </div>
+
         <div class="lightbox-thumb-strip" data-lightbox-thumb-strip></div>
+
+        <button type="button" class="lightbox-3d-cta" data-lightbox-3d-cta hidden>
+          <span class="lightbox-3d-cta-icon">&#9678;</span>
+          Ver projeto em 3D
+        </button>
       </div>
     </div>
 

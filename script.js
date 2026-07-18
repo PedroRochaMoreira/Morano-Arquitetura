@@ -1,4 +1,38 @@
 // ==========================================================
+// PRELOADER
+// Some o preloader depois que a pagina carrega, com um tempo
+// minimo pra nao "piscar" em conexoes muito rapidas.
+// Na mesma aba, so aparece uma vez por sessao.
+// ==========================================================
+(function initPreloader() {
+  const preloader = document.querySelector("[data-preloader]");
+  if (!preloader) return;
+
+  const alreadyVisited = sessionStorage.getItem("moranoPreloaderShown");
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const minDisplayTime = alreadyVisited || prefersReducedMotion ? 0 : 2500;
+  const startTime = performance.now();
+
+  function hidePreloader() {
+    const elapsed = performance.now() - startTime;
+    const remaining = Math.max(minDisplayTime - elapsed, 0);
+
+    setTimeout(() => {
+      preloader.classList.add("is-hidden");
+      document.body.classList.remove("is-loading");
+      sessionStorage.setItem("moranoPreloaderShown", "1");
+      setTimeout(() => preloader.remove(), 700);
+    }, remaining);
+  }
+
+  if (document.readyState === "complete") {
+    hidePreloader();
+  } else {
+    window.addEventListener("load", hidePreloader);
+  }
+})();
+
+// ==========================================================
 // PORTFOLIO - dados dos projetos
 // Para adicionar um projeto novo, so copiar um objeto abaixo,
 // trocar os textos e apontar "images" pras fotos em /assets
@@ -10,7 +44,11 @@ const projects = [
     category: "Residencial",
     description: "Ambiente social integrado com materiais nobres, luz indireta e composição acolhedora.",
     tall: false,
-    images: ["assets/leparc.jpeg", "assets/leparc2.jpeg"]
+    images: ["assets/leparc.jpeg", "assets/leparc2.jpeg"],
+    // DEMO: modelo de exemplo so pra mostrar o visualizador 3D funcionando.
+    // Troque pelo .glb real do projeto (exportado do SketchUp/Revit/AutoCAD + Blender)
+    // e depois remova esse comentario. Para projetos sem modelo 3D, deixe model3d: null.
+    model3d: "assets/models/demo-model.glb"
   },
   {
     id: "AlphaVille",
@@ -18,7 +56,10 @@ const projects = [
     category: "Residencial",
     description: "Volumes amplos, iluminação cênica e paisagismo integrado ao desenho da fachada.",
     tall: true,
-    images: ["assets/alphaville2.jpeg", "assets/alphaville.jpeg"]
+    images: ["assets/alphaville2.jpeg", "assets/alphaville.jpeg"],
+    // DEMO: mesmo modelo de exemplo do projeto 1, so pra testar o botao/visualizador aqui tambem.
+    // Troque pelo .glb real do AlphaVille quando tiver.
+    model3d: "assets/models/demo-model.glb"
   },
   {
     id: "TerraPark",
@@ -26,7 +67,10 @@ const projects = [
     category: "Residencial",
     description: "Fachada horizontal, varanda protegida e composição de pedra, vidro e madeira.",
     tall: false,
-    images: ["assets/terrapark.jpeg", "assets/terrapark2.jpeg"]
+    images: ["assets/terrapark.jpeg", "assets/terrapark2.jpeg"],
+    // DEMO: mesmo modelo de exemplo do projeto 1, so pra testar o botao/visualizador aqui tambem.
+    // Troque pelo .glb real do Terra Park quando tiver.
+    model3d: "assets/models/demo-model.glb"
   }
 ];
 
@@ -104,6 +148,7 @@ if (projectCursor && hasFinePointer && !prefersReducedMotionForCursor) {
 let lightboxProject = null;
 let lightboxIndex = 0;
 let lightboxScrollY = 0;
+let lightboxMode = "photos"; // "photos" ou "3d"
 
 const lightboxOverlay = document.querySelector("[data-lightbox-overlay]");
 const lightboxImage = document.querySelector("[data-lightbox-image]");
@@ -111,10 +156,16 @@ const lightboxTitle = document.querySelector("[data-lightbox-title]");
 const lightboxCategory = document.querySelector("[data-lightbox-category]");
 const lightboxCounter = document.querySelector("[data-lightbox-counter]");
 const lightboxThumbStrip = document.querySelector("[data-lightbox-thumb-strip]");
+const lightboxPhotoWrap = document.querySelector('[data-lightbox-view="photos"]');
+const lightbox3dWrap = document.querySelector('[data-lightbox-view="3d"]');
+const lightbox3dCta = document.querySelector("[data-lightbox-3d-cta]");
+const lightboxModeTabs = document.querySelector("[data-lightbox-mode-tabs]");
+const lightboxModel = document.querySelector("[data-lightbox-model]");
 
 function openLightbox(project, startIndex = 0) {
   lightboxProject = project;
   lightboxIndex = startIndex;
+  lightboxMode = "photos";
   renderLightbox();
 
   lightboxScrollY = window.scrollY;
@@ -151,8 +202,31 @@ function setLightboxIndex(i) {
   renderLightbox();
 }
 
+function setLightboxMode(mode) {
+  if (!lightboxProject) return;
+  if (mode === "3d" && !lightboxProject.model3d) return;
+
+  lightboxMode = mode;
+  renderLightbox();
+}
+
 function renderLightbox() {
   if (!lightboxProject) return;
+
+  const has3d = Boolean(lightboxProject.model3d);
+
+  // controla qual "vista" aparece: fotos ou modelo 3D
+  const showingPhotos = lightboxMode === "photos";
+  lightboxPhotoWrap.hidden = !showingPhotos;
+  lightbox3dWrap.hidden = showingPhotos;
+  lightboxThumbStrip.hidden = !showingPhotos;
+  lightbox3dCta.hidden = !has3d || !showingPhotos;
+  lightboxModeTabs.hidden = !has3d || showingPhotos;
+
+  if (!showingPhotos && lightboxModel.getAttribute("src") !== lightboxProject.model3d) {
+    lightboxModel.setAttribute("src", lightboxProject.model3d);
+    lightboxModel.setAttribute("alt", `Modelo 3D do ${lightboxProject.title}`);
+  }
 
   lightboxImage.src = lightboxProject.images[lightboxIndex];
   lightboxImage.alt = lightboxProject.title;
@@ -173,6 +247,11 @@ function renderLightbox() {
   }
 }
 
+lightbox3dCta.addEventListener("click", () => setLightboxMode("3d"));
+lightboxModeTabs.addEventListener("click", (event) => {
+  if (event.target.closest("[data-lightbox-mode]")) setLightboxMode("photos");
+});
+
 document.querySelector("[data-lightbox-close]").addEventListener("click", closeLightbox);
 document.querySelector("[data-lightbox-next]").addEventListener("click", lightboxNext);
 document.querySelector("[data-lightbox-prev]").addEventListener("click", lightboxPrev);
@@ -184,6 +263,7 @@ lightboxOverlay.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (!lightboxProject) return;
   if (event.key === "Escape") closeLightbox();
+  if (lightboxMode !== "photos") return;
   if (event.key === "ArrowRight") lightboxNext();
   if (event.key === "ArrowLeft") lightboxPrev();
 });

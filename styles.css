@@ -46,8 +46,103 @@ body::before {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
-body.nav-open {
+body.nav-open,
+body.is-loading {
   overflow: hidden;
+}
+
+/* ==========================================================
+   PRELOADER
+   ========================================================== */
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--charcoal);
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.preloader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.preloader-logo {
+  width: 132px;
+  height: auto;
+  object-fit: contain;
+  opacity: 0;
+  transform: scale(1.06);
+  animation: preloaderLogo 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.preloader-tag {
+  margin: 18px 0 0;
+  color: rgba(255, 250, 241, 0.6);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: preloaderFade 0.8s ease forwards 0.35s;
+}
+
+.preloader-bar {
+  position: relative;
+  width: 160px;
+  height: 1px;
+  margin-top: 26px;
+  overflow: hidden;
+  background: rgba(255, 250, 241, 0.16);
+}
+
+.preloader-bar span {
+  display: block;
+  width: 0%;
+  height: 100%;
+  background: var(--accent);
+  animation: preloaderBar 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards 0.25s;
+}
+
+@keyframes preloaderLogo {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes preloaderFade {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes preloaderBar {
+  to {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preloader-logo,
+  .preloader-tag,
+  .preloader-bar span {
+    animation: none;
+    opacity: 1;
+    width: 100%;
+    transform: none;
+  }
 }
 
 img {
@@ -1224,6 +1319,102 @@ cite {
   object-fit: cover;
 }
 
+/* ==========================================================
+   VISUALIZADOR 3D DENTRO DO LIGHTBOX
+   ========================================================== */
+
+.lightbox-3d-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 22px 20px;
+  padding: 15px 20px;
+  color: var(--white);
+  background: var(--accent);
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.lightbox-3d-cta:hover,
+.lightbox-3d-cta:focus-visible {
+  background: var(--pine);
+}
+
+.lightbox-3d-cta:active {
+  transform: scale(0.98);
+}
+
+.lightbox-3d-cta-icon {
+  display: inline-flex;
+  font-size: 1rem;
+}
+
+.lightbox-mode-tabs {
+  padding: 0 22px 14px;
+}
+
+.lightbox-mode-tabs button {
+  padding: 8px 0;
+  color: rgba(255, 250, 241, 0.72);
+  background: transparent;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.lightbox-mode-tabs button:hover,
+.lightbox-mode-tabs button:focus-visible {
+  color: var(--white);
+}
+
+.lightbox-3d-wrap {
+  position: relative;
+  min-height: 320px;
+  background: #0c0c0a;
+}
+
+.lightbox-3d-wrap model-viewer {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  --poster-color: transparent;
+  --progress-bar-color: var(--accent);
+}
+
+.lightbox-3d-hint {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  padding: 5px 12px;
+  color: var(--white);
+  background: rgba(14, 14, 12, 0.6);
+  border: 1px solid rgba(255, 250, 241, 0.2);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+.lightbox-img-wrap[hidden],
+.lightbox-thumb-strip[hidden],
+.lightbox-3d-wrap[hidden],
+.lightbox-3d-cta[hidden],
+.lightbox-mode-tabs[hidden] {
+  display: none;
+}
+
 @media (max-width: 720px) {
   .lightbox-panel {
     max-height: 96vh;
@@ -1234,6 +1425,15 @@ cite {
     width: 38px;
     height: 38px;
     font-size: 1.3rem;
+  }
+
+  .lightbox-3d-wrap,
+  .lightbox-3d-wrap model-viewer {
+    min-height: 260px;
+  }
+
+  .lightbox-3d-hint {
+    font-size: 0.64rem;
   }
 }
 
